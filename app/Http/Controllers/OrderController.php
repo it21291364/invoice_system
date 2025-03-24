@@ -49,10 +49,15 @@ class OrderController extends Controller
     }
 
     public function index()
-{
-    $orders = Order::with('orderItems.foodItem')->latest()->get();
-    return view('orders.index', compact('orders'));
-}
+    {
+        $orders = Order::with('orderItems.foodItem')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(fn($order) => $order->created_at->format('Y-m-d'));
+    
+        return view('orders.index', compact('orders'));
+    }
+    
 
     // Display the order receipt
     public function show(Order $order)

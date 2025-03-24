@@ -4,46 +4,53 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            @foreach($orders as $order)
-                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-                    <div class="p-4 border-b flex justify-between items-center">
-                        <div>
-                            <span class="font-bold">Order #{{ $order->id }}</span>
-                            <span class="text-gray-600 ml-4">{{ $order->created_at->format('Y-m-d H:i') }}</span>
-                        </div>
-                        <div class="text-lg font-semibold">Rs {{ number_format($order->total_amount,2) }}</div>
-                        <a href="{{ route('orders.show', $order) }}" class="bg-orange-500 text-white px-3 py-1 rounded">View Receipt</a>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            @forelse($orders as $date => $dailyOrders)
+                <div class="bg-white shadow-sm rounded-lg">
+                    <div class="p-4 bg-orange-100 flex justify-between items-center">
+                        <h3 class="text-lg font-bold">{{ \Carbon\Carbon::parse($date)->format('F j, Y') }}</h3>
+                        <span class="font-semibold">Daily Total: Rs {{ number_format($dailyOrders->sum('total_amount'), 2) }}</span>
                     </div>
 
-                    <table class="min-w-full border">
-                        <thead class="bg-orange-100">
-                            <tr>
-                                <th class="px-4 py-2 border">Food Item</th>
-                                <th class="px-4 py-2 border">Size</th>
-                                <th class="px-4 py-2 border">Qty</th>
-                                <th class="px-4 py-2 border">Price</th>
-                                <th class="px-4 py-2 border">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($order->orderItems as $item)
-                                <tr>
-                                    <td class="px-4 py-2 border">{{ $item->foodItem->name }}</td>
-                                    <td class="px-4 py-2 border">{{ ucfirst($item->foodItem->size) }}</td>
-                                    <td class="px-4 py-2 border">{{ $item->quantity }}</td>
-                                    <td class="px-4 py-2 border">Rs {{ number_format($item->price,2) }}</td>
-                                    <td class="px-4 py-2 border">Rs {{ number_format($item->price * $item->quantity,2) }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endforeach
+                    @foreach($dailyOrders as $order)
+                        <div class="p-4 border-b">
+                            <div class="flex justify-between items-center mb-2">
+                                <div>
+                                    <strong>Order #{{ $order->id }}</strong> — 
+                                    <span class="text-gray-600">{{ $order->created_at->format('H:i') }}</span>
+                                </div>
+                                <div class="font-semibold">Rs {{ number_format($order->total_amount, 2) }}</div>
+                                <a href="{{ route('orders.show', $order) }}" class="bg-orange-500 text-white px-3 py-1 rounded">View Receipt</a>
+                            </div>
 
-            @if($orders->isEmpty())
-                <p class="text-center text-gray-500">No orders have been placed yet.</p>
-            @endif
+                            <table class="min-w-full border mb-4">
+                                <thead class="bg-orange-50">
+                                    <tr>
+                                        <th class="px-4 py-2 border">Item</th>
+                                        <th class="px-4 py-2 border">Size</th>
+                                        <th class="px-4 py-2 border">Qty</th>
+                                        <th class="px-4 py-2 border">Price</th>
+                                        <th class="px-4 py-2 border">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($order->orderItems as $item)
+                                        <tr>
+                                            <td class="px-4 py-2 border">{{ $item->foodItem->name }}</td>
+                                            <td class="px-4 py-2 border">{{ ucfirst($item->foodItem->size) }}</td>
+                                            <td class="px-4 py-2 border">{{ $item->quantity }}</td>
+                                            <td class="px-4 py-2 border">Rs {{ number_format($item->price, 2) }}</td>
+                                            <td class="px-4 py-2 border">Rs {{ number_format($item->price * $item->quantity, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endforeach
+                </div>
+            @empty
+                <p class="text-center text-gray-500">No orders placed yet.</p>
+            @endforelse
         </div>
     </div>
 </x-app-layout>
