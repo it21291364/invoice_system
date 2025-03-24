@@ -48,6 +48,12 @@ class OrderController extends Controller
         return redirect()->route('orders.show', $order)->with('success', 'Order created successfully.');
     }
 
+    public function index()
+{
+    $orders = Order::with('orderItems.foodItem')->latest()->get();
+    return view('orders.index', compact('orders'));
+}
+
     // Display the order receipt
     public function show(Order $order)
     {
