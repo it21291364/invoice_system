@@ -19,10 +19,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('food_items', FoodItemController::class);
-Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+// Admin-only routes
+// Route::middleware(['auth', 'role:admin'])->group(function () {
+//     Route::resource('food_items', FoodItemController::class);
+//     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+// });
+
+// Routes accessible to both Admin and Cashier
+Route::middleware('auth')->group(function () {
+    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::resource('food_items', FoodItemController::class);
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+});
 
 require __DIR__.'/auth.php';
