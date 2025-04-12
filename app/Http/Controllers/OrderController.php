@@ -64,4 +64,15 @@ class OrderController extends Controller
     {
         return view('orders.show', compact('order'));
     }
+
+    // OrderController.php
+
+public function destroy(Order $order)
+{
+    // Optionally, if you need to delete related orderItems (if not handled by cascade), do that here.
+    $order->delete();
+
+    return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+}
+
 }

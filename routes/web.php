@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::resource('food_items', FoodItemController::class);
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    // In your routes/web.php inside the auth middleware group:
+Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
 });
 
 require __DIR__.'/auth.php';

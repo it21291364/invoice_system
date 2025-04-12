@@ -1,7 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
+    {{-- <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800">All Orders</h2>
-    </x-slot>
+    </x-slot> --}}
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
@@ -19,8 +19,20 @@
                                     <strong>Order #{{ $order->id }}</strong> — 
                                     <span class="text-gray-600">{{ $order->created_at->format('H:i') }}</span>
                                 </div>
-                                <div class="font-semibold">Rs {{ number_format($order->total_amount, 2) }}</div>
-                                <a href="{{ route('orders.show', $order) }}" class="bg-orange-500 text-white px-3 py-1 rounded">View Receipt</a>
+                                <div class="flex space-x-2 items-center">
+                                    <div class="font-semibold">Rs {{ number_format($order->total_amount, 2) }}</div>
+                                    <a href="{{ route('orders.show', $order) }}" class="bg-orange-500 text-white px-3 py-1 rounded">View Receipt</a>
+                                    <!-- Delete Order Button with icon -->
+                                    <form action="{{ route('orders.destroy', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 text-white p-2 rounded" aria-label="Delete Order">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M8 7V4a1 1 0 011-1h6a1 1 0 011 1v3" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
 
                             <table class="min-w-full border mb-4">
